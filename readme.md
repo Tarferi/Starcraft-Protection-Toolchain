@@ -17,6 +17,11 @@ proedit
 ```
 > Options: `a1` (username), `a2` (email)
 
+```
+tinymap
+```
+> No options available
+
 
 ### TODO:
 > More protectors

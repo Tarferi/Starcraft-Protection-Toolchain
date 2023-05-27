@@ -12,37 +12,6 @@ ProEdit::~ProEdit() {
 }
 
 static char ProEditExec[4096];
-static char ProEditCheckFile[4096];
-
-bool ProEdit::CheckFile(const char* root, const char* file, const char* sha1, uint8* data, uint32 dataLength) {
-	sprintf_s(ProEditCheckFile, "%s%s", root, file);
-	uint8* contents = nullptr;
-	uint32 contentsLength = 0;
-	bool create = false;
-	if (ReadFile(ProEditCheckFile, &contents, &contentsLength)) {
-		const char* hash = nullptr;
-		if (Sha1(contents, contentsLength, &hash)) {
-			if (strcmp(hash, sha1)) {
-				LOG_INFO("Sha1 for file %s differs, recreating", file);
-				DeleteFile(ProEditCheckFile);
-				create = true;
-			}
-		} else {
-			LOG_ERROR("Sha1 failed");
-			return false;
-		}
-	} else {
-		create = true;
-	}
-
-	if (create) {
-		if (!WriteFile(ProEditCheckFile, data, dataLength)) {
-			LOG_ERROR("Failed to write file %s", file);
-			return false;
-		}
-	}
-	return true;
-}
 
 bool ProEdit::CheckFiles(const char* root) {
 	if (!DirectoryExists(root)) {
@@ -96,27 +65,7 @@ bool ProEdit::Check() {
 	return bRet;
 }
 
-bool HandleOpenFileDialog(ProcessWindow* wnd, const char* file) {
-	if (!FileExists(file)) {
-		LOG_ERROR("Input file does not exist");
-		return false;
-	}
-	
-	bool bRet = true;
-	bRet &= wnd->GetRootNode()->NthChildOfClass("ComboBox", 0, [&](UINode* comboNode) {
-		bRet &= comboNode->NthChildOfClass("Edit", 0, [&](UINode* editNode) {
-			bRet &= editNode->SetText(file);
-		});
-	});
-
-	bRet &= wnd->GetRootNode()->NthChildOfClass("Button", 0, [&](UINode* btnNode) {
-		bRet &= btnNode->Click();
-	});
-		
-	return bRet;
-}
-
-bool HandleOpenFile(Process* p, ProcessWindow* wnd, const char* file) {
+bool ProEdit::HandleOpenFile(Process* p, ProcessWindow* wnd, const char* file) {
 	if (!wnd->ClickElement("File Operations/Open map")) {
 		LOG_ERROR("Failed to click on opet map button");
 		return false;
@@ -142,7 +91,7 @@ bool HandleOpenFile(Process* p, ProcessWindow* wnd, const char* file) {
 	return true;
 }
 
-bool HandleMapProtect(Process* p, ProcessWindow* wnd, const char* username, const char* email) {
+bool ProEdit::HandleMapProtect(Process* p, ProcessWindow* wnd, const char* username, const char* email) {
 	bool bRet = true;
 	if (!wnd->NodeForPath("Protection/Protect", [&](UINode* node) {
 		bRet &= node->Click();
@@ -184,36 +133,7 @@ bool HandleMapProtect(Process* p, ProcessWindow* wnd, const char* username, cons
 	return bRet;
 }
 
-bool HandleSaveFileDialog(ProcessWindow* wnd, const char* file) {
-	bool bRet = true;
-	if (FileExists(file)) {
-		if (!DeleteFile(file)) {
-			LOG_ERROR("Could not delete output file");
-			return false;
-		}
-	}
-
-	if (FileExists(file)) {
-		LOG_ERROR("Could not delete output file");
-		return false;
-	}
-
-	bRet &= wnd->GetRootNode()->NthChildOfClass("DUIViewWndClassName", 0, [&](UINode* dclNode) {
-		bRet &= dclNode->NthChildOfClass("AppControlHost", 0, [&](UINode* comboNode) {
-			bRet &= comboNode->NthChildOfClass("Edit", 0, [&](UINode* editNode) {
-				bRet &= editNode->SetText(file);
-			});
-		});
-	});
-
-	bRet &= wnd->GetRootNode()->NthChildOfClass("Button", 0, [&](UINode* btnNode) {
-		bRet &= btnNode->Click();
-	});
-		
-	return bRet;
-}
-
-bool HandleSaveFile(Process* p, ProcessWindow* wnd, const char* file) {
+bool ProEdit::HandleSaveFile(Process* p, ProcessWindow* wnd, const char* file) {
 	if (!wnd->ClickElement("File Operations/Save map")) {
 		LOG_ERROR("Failed to click on opet map button");
 		return false;

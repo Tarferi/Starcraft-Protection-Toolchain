@@ -6,13 +6,13 @@ class DesktopFactory;
 class Process;
 class ProcessWindow;
 
-class ProEdit : public Protection {
+class TinyMap : public Protection {
 
 public:
 
-	ProEdit(DesktopFactory* df, const char* name, const char* email);
+	TinyMap(DesktopFactory* df);
 
-	virtual ~ProEdit();
+	virtual ~TinyMap();
 
 	virtual bool Protect(char* input, char* output) override;
 
@@ -24,11 +24,9 @@ private:
 
 	bool HandleOpenFile(Process* p, ProcessWindow* wnd, const char* file);
 
-	bool HandleMapProtect(Process* p, ProcessWindow* wnd, const char* username, const char* email);
-	
+	bool HandleMapCompress(Process* p, ProcessWindow* wnd);
+
 	bool HandleSaveFile(Process* p, ProcessWindow* wnd, const char* file);
 
-	const char* username = nullptr;
-	const char* email = nullptr;
 };
 

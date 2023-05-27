@@ -9,6 +9,11 @@
 #undef CreateDesktop
 #endif
 
+#pragma push_macro("DeleteFile")
+#ifdef DeleteFile
+#undef DeleteFile
+#endif
+
 std::wstring s2ws(const std::string& str);
 
 Protection::Protection(DesktopFactory* df, const char* name) {
@@ -40,6 +45,56 @@ const char* Protection::GetWorkingDir() {
 	sprintf_s(ProtectionWorkingDirs, "%s\\ProEdit\\", szFileName);
 	return ProtectionWorkingDirs;
 }
+
+bool Protection::HandleOpenFileDialog(ProcessWindow* wnd, const char* file) {
+	if (!FileExists(file)) {
+		LOG_ERROR("Input file does not exist");
+		return false;
+	}
+
+	bool bRet = true;
+	bRet &= wnd->GetRootNode()->NthChildOfClass("ComboBox", 0, [&](UINode* comboNode) {
+		bRet &= comboNode->NthChildOfClass("Edit", 0, [&](UINode* editNode) {
+			bRet &= editNode->SetText(file);
+		});
+	});
+
+	bRet &= wnd->GetRootNode()->NthChildOfClass("Button", 0, [&](UINode* btnNode) {
+		bRet &= btnNode->Click();
+	});
+
+	return bRet;
+}
+
+bool Protection::HandleSaveFileDialog(ProcessWindow* wnd, const char* file) {
+	bool bRet = true;
+	if (FileExists(file)) {
+		if (!DeleteFile(file)) {
+			LOG_ERROR("Could not delete output file");
+			return false;
+		}
+	}
+
+	if (FileExists(file)) {
+		LOG_ERROR("Could not delete output file");
+		return false;
+	}
+
+	bRet &= wnd->GetRootNode()->NthChildOfClass("DUIViewWndClassName", 0, [&](UINode* dclNode) {
+		bRet &= dclNode->NthChildOfClass("AppControlHost", 0, [&](UINode* comboNode) {
+			bRet &= comboNode->NthChildOfClass("Edit", 0, [&](UINode* editNode) {
+				bRet &= editNode->SetText(file);
+				});
+			});
+		});
+
+	bRet &= wnd->GetRootNode()->NthChildOfClass("Button", 0, [&](UINode* btnNode) {
+		bRet &= btnNode->Click();
+		});
+
+	return bRet;
+}
+
 
 bool Protection::EnterDesktop(const char* name) {
 	if (d && strcmp(d->GetName(), name)) {
@@ -105,4 +160,37 @@ bool Protection::HasDLLClass(const char* name, const char* cls) {
 	return false;
 }
 
+static char FileEditCheckFile[4096];
+
+bool Protection::CheckFile(const char* root, const char* file, const char* sha1, uint8* data, uint32 dataLength) {
+	sprintf_s(FileEditCheckFile, "%s%s", root, file);
+	uint8* contents = nullptr;
+	uint32 contentsLength = 0;
+	bool create = false;
+	if (ReadFile(FileEditCheckFile, &contents, &contentsLength)) {
+		const char* hash = nullptr;
+		if (Sha1(contents, contentsLength, &hash)) {
+			if (strcmp(hash, sha1)) {
+				LOG_INFO("Sha1 for file %s differs, recreating", file);
+				DeleteFile(FileEditCheckFile);
+				create = true;
+			}
+		} else {
+			LOG_ERROR("Sha1 failed");
+			return false;
+		}
+	} else {
+		create = true;
+	}
+
+	if (create) {
+		if (!WriteFile(FileEditCheckFile, data, dataLength)) {
+			LOG_ERROR("Failed to write file %s", file);
+			return false;
+		}
+	}
+	return true;
+}
+
+#pragma pop_macro("DeleteFile")
 #pragma pop_macro("CreateDesktop")

@@ -1,4 +1,5 @@
 #include "ProEditLib/src/ProEdit.h"
+#include "TinyMapLib/src/TinyMap.h"
 #include <Desktop.h>
 
 int main(int argc, char** argv) {
@@ -82,6 +83,15 @@ int main(int argc, char** argv) {
                 }
                 if (run) {
                     ProEdit p(f, algA[0], algA[1]);
+                    if (p.Check()) {
+                        run &= p.Protect(input, output);
+                    } else {
+                        run = false;
+                    }
+                }
+            } else if (!strcmp(alg, "tinymap")) {
+                if (run) {
+                    TinyMap p(f);
                     if (p.Check()) {
                         run &= p.Protect(input, output);
                     } else {
