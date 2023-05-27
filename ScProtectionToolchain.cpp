@@ -1,6 +1,7 @@
 #include "ProEditLib/src/ProEdit.h"
 #include "TinyMapLib/src/TinyMap.h"
 #include "SpecialProtectorLib/src/SpecialProtector.h"
+#include "SMLPLib/src/SMLP.h"
 #include <Desktop.h>
 
 int main(int argc, char** argv) {
@@ -108,6 +109,15 @@ int main(int argc, char** argv) {
             } else if (!strcmp(alg, "special")) {
                 if (run) {
                     SpecialProtector p(f);
+                    if (p.Check()) {
+                        run &= p.Protect(input, output);
+                    } else {
+                        run = false;
+                    }
+                }
+            } else if (!strcmp(alg, "smlp")) {
+                if (run) {
+                    SMLP p(f);
                     if (p.Check()) {
                         run &= p.Protect(input, output);
                     } else {

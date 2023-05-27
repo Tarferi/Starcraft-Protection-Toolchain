@@ -40,6 +40,8 @@ protected:
 
 	bool HandleSaveFileDialog(ProcessWindow* wnd, const char* file);
 
+	void Sleep(int32 sleepMS);
+
 private:
 
 	const char* name = nullptr;

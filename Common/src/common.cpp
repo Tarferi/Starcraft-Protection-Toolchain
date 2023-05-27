@@ -143,10 +143,11 @@ bool ReadFile(const char* path, uint8** data, uint32* dataLength) {
 			}
 		}
 		fclose(f);
-
 		MALLOC_N(nb, uint8, vec.size(), { return false; });
-		uint8* raw = &(vec.at(0));
-		memcpy(nb, raw, vec.size());
+		if (vec.size() > 0) {
+			uint8* raw = &(vec.at(0));
+			memcpy(nb, raw, vec.size());
+		}
 
 		*data = nb;
 		*dataLength = vec.size();
@@ -163,7 +164,7 @@ bool WriteFile(const char* path, uint8* data, uint32 dataLength) {
 			int32 writtenNow = fwrite(&(data[written]), 1, dataLength - written, f);
 			if (writtenNow <= 0) {
 				fclose(f);
-				LOG_ERROR("Failed to write file %s", path);
+				LOG_ERROR("Failed to write file %s: %d", path, GetLastError());
 				return false;
 			} else {
 				written += writtenNow;

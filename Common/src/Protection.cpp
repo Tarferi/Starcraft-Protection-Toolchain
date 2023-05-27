@@ -66,6 +66,14 @@ bool Protection::HandleOpenFileDialog(ProcessWindow* wnd, const char* file) {
 	return bRet;
 }
 
+static void sSleep(int32 ms) {
+	Sleep(ms);
+}
+
+void Protection::Sleep(int32 sleepMS) {
+	sSleep(sleepMS);
+}
+
 bool Protection::HandleSaveFileDialog(ProcessWindow* wnd, const char* file) {
 	bool bRet = true;
 	if (FileExists(file)) {
