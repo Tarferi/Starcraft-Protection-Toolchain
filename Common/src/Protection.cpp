@@ -42,7 +42,7 @@ const char* Protection::GetWorkingDir() {
 	}
 #endif
 	ProtectionWorkingDirs[0] = 0;
-	sprintf_s(ProtectionWorkingDirs, "%s\\ProEdit\\", szFileName);
+	sprintf_s(ProtectionWorkingDirs, "%s\\%s\\", szFileName, this->name);
 	return ProtectionWorkingDirs;
 }
 
@@ -132,6 +132,33 @@ bool Protection::HasDLL(const char* name) {
 	return true;
 }
 
+bool Protection::HasSysFile(const char* name, const char* sha1, uint8* data, uint32 dataLength) {
+	char tmp [1024];
+	GetSystemDirectoryA(tmp, sizeof(tmp) - 3);
+	uint32 sz = (uint32)strlen(tmp);
+	tmp[sz] = '\\';
+	tmp[sz + 1] = 0;
+	if (!CheckFile(tmp, name, sha1, data, dataLength)) {
+		LOG_ERROR("Failed to check system file");
+		return false;
+	}
+
+	for (int32 i = sz - 1; i >= 0; i--) {
+		if (tmp[i] == '\\' || tmp[i] == '/') {
+			char* t = &(tmp[i + 1]);
+			memcpy(t, "SysWOW64\\\0", strlen("SysWOW64\\\0") + 1);
+			break;
+		}
+	}
+
+	if (!CheckFile(tmp, name, sha1, data, dataLength)) {
+		LOG_ERROR("Failed to check system file");
+		return false;
+	}
+
+	return true;
+}
+
 static char ProtectionPathTmp[4096];
 
 bool Protection::HasDLLClass(const char* name, const char* cls) {
@@ -185,7 +212,7 @@ bool Protection::CheckFile(const char* root, const char* file, const char* sha1,
 
 	if (create) {
 		if (!WriteFile(FileEditCheckFile, data, dataLength)) {
-			LOG_ERROR("Failed to write file %s", file);
+			LOG_ERROR("Failed to write file %s to %s", file, root);
 			return false;
 		}
 	}

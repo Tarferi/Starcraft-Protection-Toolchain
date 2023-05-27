@@ -1,5 +1,6 @@
 #include "ProEditLib/src/ProEdit.h"
 #include "TinyMapLib/src/TinyMap.h"
+#include "SpecialProtectorLib/src/SpecialProtector.h"
 #include <Desktop.h>
 
 int main(int argc, char** argv) {
@@ -58,6 +59,12 @@ int main(int argc, char** argv) {
         printf("\t\t-a1 <username>\r\n");
         printf("\t\t-a2 <email>\r\n");
 
+        // Tinymap
+        printf("tinymap\r\n\r\n");
+
+        // Special protector
+        printf("special\r\n\r\n");
+
         printf("\r\n");
     } else {
         DesktopFactory* f = hiddenDesktop ? (DesktopFactory*) &hf : (DesktopFactory*) &vf;
@@ -92,6 +99,15 @@ int main(int argc, char** argv) {
             } else if (!strcmp(alg, "tinymap")) {
                 if (run) {
                     TinyMap p(f);
+                    if (p.Check()) {
+                        run &= p.Protect(input, output);
+                    } else {
+                        run = false;
+                    }
+                }
+            } else if (!strcmp(alg, "special")) {
+                if (run) {
+                    SpecialProtector p(f);
                     if (p.Check()) {
                         run &= p.Protect(input, output);
                     } else {

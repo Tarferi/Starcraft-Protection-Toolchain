@@ -195,6 +195,15 @@ ProcessWindow::~ProcessWindow() {
 	}
 }
 
+bool ProcessWindow::IsSameAs(ProcessWindow* another) {
+	struct ProcessWindowData* data = reinterpret_cast<struct ProcessWindowData*>(buffer);
+	struct ProcessWindowData* anotherData = reinterpret_cast<struct ProcessWindowData*>(another->buffer);
+	if (data->handle == anotherData->handle) {
+		return true;
+	}
+	return false;
+}
+
 static char WindowNames[1024];
 
 const char* ProcessWindow::GetWindowName() {
@@ -493,13 +502,19 @@ ProcessWindow* Process::WaitForWindowClass(const char* className, int32 timeoutM
 	return nullptr;
 }
 
-bool Process::WaitForWindowClassClose(const char* className, int32 timeoutMS) {
+bool Process::WaitForWindowClassClose(const char* className, int32 timeoutMS, ProcessWindow* wndThatMustNotExistAnymore) {
 	int32 waited = 0;
 	while (waited < timeoutMS) {
 		bool bRetNow = true;
 		if (!IterWindows([&](ProcessWindow* wnd) {
 			if (!strcmp(wnd->GetWindowClassName(), className)) {
-				bRetNow = false;
+				if (wndThatMustNotExistAnymore != nullptr) {
+					if (wnd->IsSameAs(wndThatMustNotExistAnymore)) {
+						bRetNow = false;
+					}
+				} else {
+					bRetNow = false;
+				}
 			}
 			})) {
 			LOG_ERROR("Failed to iterate windows");

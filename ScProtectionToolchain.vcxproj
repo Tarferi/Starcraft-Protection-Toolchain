@@ -152,6 +152,9 @@
     <ProjectReference Include="ProEditLib\ProEditLib.vcxproj">
       <Project>{1b915ff3-ac5b-4519-a3e5-25f8c67f4f82}</Project>
     </ProjectReference>
+    <ProjectReference Include="SpecialProtectorLib\SpecialProtectorLib.vcxproj">
+      <Project>{378c6182-3906-4556-9518-110f334f9a36}</Project>
+    </ProjectReference>
     <ProjectReference Include="TinyMapLib\TinyMapLib.vcxproj">
       <Project>{5d32ff0e-85a2-46a8-8421-30f16d543c4a}</Project>
     </ProjectReference>

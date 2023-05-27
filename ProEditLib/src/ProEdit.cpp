@@ -41,7 +41,7 @@ bool ProEdit::CheckFiles(const char* root) {
 	}
 
 	bool bRet = true;
-	bRet &= CheckFile(root, "Comdlg32.ocx", "9bc145b54500fb6fbea9be61fbdd90f65fd1bc14", (uint8*)comdlg_ocx, comdlg_ocx_size);
+	bRet &= CheckFile(root, "Comdlg32.ocx", "eb49323be4384a0e7e36053f186b305636e82887", (uint8*)comdlg_ocx, comdlg_ocx_size);
 	bRet &= CheckFile(root, "MpqCtl.ocx", "1e76e6d69afb9224d265a337fe9eb8d7e207197f", (uint8*)mpqctl_ocx, mpqctl_ocx_size);
 	bRet &= CheckFile(root, "MSCOMCTL.OCX", "b3f80b06ad6283fc021de1682772c22dd6f2436b", (uint8*)mscomctl_ocx, mscomctl_ocx_size);
 	bRet &= CheckFile(root, "PROEdit.exe", "974677ca1bf421b8a73d32f1d96d035547da65e7", (uint8*)proedit_exe, proedit_exe_size);

@@ -15,12 +15,21 @@ Default behavior is hidden instance but it's somehow slower than visible instanc
 ```
 proedit
 ```
+Proedit v.1.4.1
 > Options: `a1` (username), `a2` (email)
 
 ```
 tinymap
+Tiny map 2
 ```
 > No options available
+
+```
+special
+```
+Special protector 2
+> No options available
+
 
 
 ### TODO:

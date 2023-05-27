@@ -117,6 +117,8 @@ protected:
 
 	struct UINodeData* GetRootNodeData();
 
+	bool IsSameAs(ProcessWindow* another);
+
 private:
 
 	uint8 buffer[64];
@@ -154,7 +156,7 @@ public:
 
 	ProcessWindow* WaitForWindowClass(const char* className, int32 timeoutMS);
 	
-	bool WaitForWindowClassClose(const char* className, int32 timeoutMS);
+	bool WaitForWindowClassClose(const char* className, int32 timeoutMS, ProcessWindow* wndThatMustNotExistAnymore = nullptr);
 
 	bool Run();
 

@@ -30,6 +30,8 @@ protected:
 
 	bool HasDLL(const char* name);
 	
+	bool HasSysFile(const char* name, const char* sha1, uint8* data, uint32 dataLength);
+
 	bool HasDLLClass(const char* name, const char* cls);
 
 	bool CheckFile(const char* root, const char* file, const char* sha1, uint8* data, uint32 dataLength);
