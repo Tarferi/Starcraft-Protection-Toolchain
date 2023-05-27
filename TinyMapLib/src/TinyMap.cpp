@@ -56,10 +56,9 @@ bool TinyMap::Check() {
 	return bRet;
 }
 
-
 bool TinyMap::Protect(char* input, char* output) {
 	LOG_INFO("Entering virtual desktop... ");
-	if (!EnterDesktop("ProEditDesktop")) {
+	if (!EnterDesktop("TinymapDesktop")) {
 		LOG_ERROR("Failed to enter desktop");
 		return false;
 	}
@@ -72,16 +71,10 @@ bool TinyMap::Protect(char* input, char* output) {
 		return false;
 	}
 	
-	/*
-	p.IterWindows([&](ProcessWindow* wnd) {
-		LOG_ERROR("%s", wnd->GetWindowName());
-	});
-	*/
-
 	ProcessWindow* wnd = p.WaitForWindow("TinyMap v2.1.3", 5000);
 	DelGuard(wnd);
 	if (!wnd) {
-		LOG_ERROR("Window for proedit was not created");
+		LOG_ERROR("Window for tinymap was not created");
 		return false;
 	}
 
@@ -109,7 +102,6 @@ bool TinyMap::Protect(char* input, char* output) {
 
 	return true;
 }
-
 
 bool TinyMap::HandleOpenFile(Process* p, ProcessWindow* wnd, const char* file) {
 
@@ -139,29 +131,6 @@ bool TinyMap::HandleOpenFile(Process* p, ProcessWindow* wnd, const char* file) {
 }
 
 bool TinyMap::HandleMapCompress(Process* p, ProcessWindow* wnd) {
-	/*
-	if (!wnd->ClickElement("Open Map")) {
-		LOG_ERROR("Failed to click on open map");
-		return false;
-	}
-
-	ProcessWindow* wndOpen = p->WaitForWindowClass("#32770", 5000);
-	DelGuard(wndOpen);
-	if (!wndOpen) {
-		LOG_ERROR("Window for file open was not found");
-		return false;
-	}
-
-	if (!HandleSaveFileDialog(wndOpen, file)) {
-		LOG_ERROR("Failed to handle open file dialog");
-		return false;
-	}
-
-	if (!p->WaitForWindowClassClose("#32770", 5000)) {
-		LOG_ERROR("Open file dialog failed to close");
-		return false;
-	}
-	*/
 	return true;
 }
 
