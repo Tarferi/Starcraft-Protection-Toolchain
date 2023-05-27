@@ -25,6 +25,11 @@
   <ItemGroup>
     <ClCompile Include="src\TinyMap.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{dbe9fa39-4c88-492f-9ad1-b2069e2a6575}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
