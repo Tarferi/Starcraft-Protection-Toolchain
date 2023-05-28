@@ -107,37 +107,36 @@ bool UINode::Click() {
 				}
 			}
 		} else {
+			
 			hr = data->node->GetCurrentPattern(UIA_LegacyIAccessiblePatternId, (IUnknown**)&tmp);
 			if (tmp && hr == S_OK) {
 				ILegacyIAccessibleProvider* acc = static_cast<ILegacyIAccessibleProvider*>(tmp);
 				if (acc) {
+					HWND phwnd = GetForegroundWindow();
+					SetForegroundWindow(data->wnd);
 					hr = data->node->SetFocus();
 					if (hr == S_OK) {
-						IOleControl* abc = nullptr;
-						CONTROLTYPEID tid;
-						data->node->get_CurrentControlType(&tid);
-						if (tid == UIA_PaneControlTypeId) {
+						INPUT in;
+						memset(&in, 0, sizeof(INPUT));
+						in.ki.wScan = MapVirtualKeyEx(VK_RETURN, 0, GetKeyboardLayout(0));
+						in.type = INPUT_KEYBOARD;
+						in.ki.wVk = VK_RETURN;
+						in.ki.time = 0;
+						Sleep(5);
+						uint32 evts = SendInput(1, &in, sizeof(INPUT));
+						if (evts == 1) {
+							in.ki.dwFlags = KEYEVENTF_KEYUP;
+							evts = SendInput(1, &in, sizeof(INPUT));
+							if (evts == 1) {
+								bRet = true;
+							}
 						}
-
-						POINT p;
-						BOOL pc = false;
-						hr = data->node->GetClickablePoint(&p, &pc);
-
-						hr = data->node->QueryInterface<IOleControl>(&abc);
-
-						SendMessage(data->wnd, WM_KEYDOWN, 'A' - 0x20, 0);
-						Sleep(100);
-						SendMessage(data->wnd, WM_CHAR, 'A' - 0x20, 0);
-						Sleep(100);
-						SendMessage(data->wnd, WM_KEYUP, 'A' - 0x20, 0);
-						Sleep(100);
-						SendMessage(data->wnd, WM_KEYDOWN, VK_RETURN, 0);
-						Sleep(100);
-						SendMessage(data->wnd, WM_KEYUP, VK_RETURN, 0);
-						Sleep(100);
+						Sleep(5);
 					}
+					SetForegroundWindow(phwnd);
 				}
 			}
+			
 		}
 	}
 	if (tmp) {

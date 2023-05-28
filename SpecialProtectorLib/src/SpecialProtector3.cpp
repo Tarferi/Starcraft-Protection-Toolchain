@@ -83,19 +83,18 @@ bool SpecialProtector3::Protect(char* input, char* output) {
 		return false;
 	}
 
-
 	LOG_INFO("Opening file save dialog... ");
 
 	if (!HandleSaveFile(&p, wnd, output)) {
 		LOG_ERROR("Failed to save file");
 		return false;
 	}
+	Sleep(100);
 
 	return true;
 }
 
 bool SpecialProtector3::HandleOpenFile(Process* p, ProcessWindow* wnd, const char* file) {
-	wnd->PrintHierarchy(NodeInfo::ClassAndName);
 	bool bRet = true;
 	bRet &= wnd->GetRootNode()->NthChildOfClass("ThunderRT6UserControlDC", 7, [&](UINode* btnOpen) {
 		bRet &= btnOpen->Click();
@@ -112,71 +111,28 @@ bool SpecialProtector3::HandleOpenFile(Process* p, ProcessWindow* wnd, const cha
 		return false;
 	}
 
-	if (!p->WaitForWindowClassClose("#32770", 5000, wndOpen)) {
-		LOG_ERROR("Open file dialog failed to close");
-		return false;
-	}
-
-	ProcessWindow* wndResult = p->WaitForWindowClass("#32770", 5000);
-	DelGuard(wndResult);
-	if (!wndResult) {
-		LOG_ERROR("Map open dialog not shown");
-		return false;
-	}
-	bRet &= wndResult->GetRootNode()->NthChildOfClass("Static", 1, [&](UINode* node) {
-		if (strcmp(node->GetName(), "Success")) {
-			LOG_ERROR("Failed to open map: %s", node->GetName());
-			bRet = false;
-		}
-		});
-
-	bRet &= wndResult->GetRootNode()->NthChildOfClass("Button", 0, [&](UINode* node) {
-		node->Click();
-		});
-
 	if (!p->WaitForWindowClassClose("#32770", 5000)) {
 		LOG_ERROR("Open file dialog failed to close");
 		return false;
 	}
+
 	return bRet;
 }
 
 bool SpecialProtector3::HandleMapProtect(Process* p, ProcessWindow* wnd) {
-	if (!wnd->ClickElement("Protection/Special")) {
-		LOG_ERROR("Failed to click on protect");
-		return false;
-	}
-
-	ProcessWindow* wndResult = p->WaitForWindowClass("#32770", 5000);
-	DelGuard(wndResult);
-	if (!wndResult) {
-		LOG_ERROR("Map protection result not shown");
-		return false;
-	}
 	bool bRet = true;
-	bRet &= wndResult->GetRootNode()->NthChildOfClass("Static", 1, [&](UINode* node) {
-		if (strcmp(node->GetName(), "Success")) {
-			LOG_ERROR("Failed to protect map: %s", node->GetName());
-			bRet = false;
-		}
-		});
-
-	bRet &= wndResult->GetRootNode()->NthChildOfClass("Button", 0, [&](UINode* node) {
-		node->Click();
-		});
-
-	if (!p->WaitForWindowClassClose("#32770", 5000)) {
-		LOG_ERROR("Protection dialog failed to close");
-		return false;
-	}
+	bRet &= wnd->GetRootNode()->NthChildOfClass("ThunderRT6UserControlDC", 6, [&](UINode* btnOpen) {
+		bRet &= btnOpen->Click();
+	});
 	return bRet;
 }
 
 bool SpecialProtector3::HandleSaveFile(Process* p, ProcessWindow* wnd, const char* file) {
-	if (!wnd->ClickElement("File Option/Save")) {
-		LOG_ERROR("Failed to click on open map");
-		return false;
-	}
+	bool bRet = true;
+	
+	bRet &= wnd->GetRootNode()->NthChildOfClass("ThunderRT6UserControlDC", 4, [&](UINode* btnOpen) {
+		bRet &= btnOpen->Click();
+	});
 
 	ProcessWindow* wndOpen = p->WaitForWindowClass("#32770", 5000);
 	DelGuard(wndOpen);
@@ -190,32 +146,10 @@ bool SpecialProtector3::HandleSaveFile(Process* p, ProcessWindow* wnd, const cha
 		return false;
 	}
 
-	if (!p->WaitForWindowClassClose("#32770", 5000, wndOpen)) {
-		LOG_ERROR("Open file dialog failed to close");
-		return false;
-	}
-
-	ProcessWindow* wndResult = p->WaitForWindowClass("#32770", 5000);
-	DelGuard(wndResult);
-	if (!wndResult) {
-		LOG_ERROR("Map open dialog not shown");
-		return false;
-	}
-	bool bRet = true;
-	bRet &= wndResult->GetRootNode()->NthChildOfClass("Static", 1, [&](UINode* node) {
-		if (strcmp(node->GetName(), "Success")) {
-			LOG_ERROR("Failed to open map: %s", node->GetName());
-			bRet = false;
-		}
-		});
-
-	bRet &= wndResult->GetRootNode()->NthChildOfClass("Button", 0, [&](UINode* node) {
-		node->Click();
-		});
-
 	if (!p->WaitForWindowClassClose("#32770", 5000)) {
 		LOG_ERROR("Open file dialog failed to close");
 		return false;
 	}
+	
 	return bRet;
 }

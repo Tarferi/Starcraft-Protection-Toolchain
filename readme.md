@@ -29,6 +29,11 @@ special
 ```
 Special protector 2
 > No options available
+```
+special
+```
+Special protector 3. Must be used with `-visible` because keyboard is abused to control protectors window.
+> No options available
 
 ```
 smlp

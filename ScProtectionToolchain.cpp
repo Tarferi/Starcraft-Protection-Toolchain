@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
 
         // Special protector
         printf("special\r\n\r\n");
-        printf("special3\r\n\r\n");
+        printf("special3\r\n(visible only, keyboard is abused to control protectors window)\r\n\r\n");
 
         // SMLP
         printf("smlp\r\n\r\n");
@@ -121,6 +121,10 @@ int main(int argc, char** argv) {
                     }
                 }
             } else if (!strcmp(alg, "special3")) {
+                if (hiddenDesktop) {
+                    LOG_ERROR("Cannot run hidden with special3. There are clicks inside the window that must be visible");
+                    run = false;
+                }
                 if (run) {
                     SpecialProtector3 p(f);
                     if (p.Check()) {
