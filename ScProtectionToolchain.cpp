@@ -1,6 +1,7 @@
 #include "ProEditLib/src/ProEdit.h"
 #include "TinyMapLib/src/TinyMap.h"
 #include "SpecialProtectorLib/src/SpecialProtector.h"
+#include "SpecialProtectorLib/src/SpecialProtector3.h"
 #include "SMLPLib/src/SMLP.h"
 #include <Desktop.h>
 
@@ -65,6 +66,10 @@ int main(int argc, char** argv) {
 
         // Special protector
         printf("special\r\n\r\n");
+        printf("special3\r\n\r\n");
+
+        // SMLP
+        printf("smlp\r\n\r\n");
 
         printf("\r\n");
     } else {
@@ -109,6 +114,15 @@ int main(int argc, char** argv) {
             } else if (!strcmp(alg, "special")) {
                 if (run) {
                     SpecialProtector p(f);
+                    if (p.Check()) {
+                        run &= p.Protect(input, output);
+                    } else {
+                        run = false;
+                    }
+                }
+            } else if (!strcmp(alg, "special3")) {
+                if (run) {
+                    SpecialProtector3 p(f);
                     if (p.Check()) {
                         run &= p.Protect(input, output);
                     } else {

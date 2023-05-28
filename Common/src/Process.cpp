@@ -6,6 +6,7 @@
 #include <tlhelp32.h>
 #include <comdef.h> 
 #include <locale.h>
+#include <objidl.h>
 
 #pragma push_macro("GetClassName")
 #ifdef GetClassName
@@ -16,6 +17,7 @@ struct UINodeData {
 	IUIAutomation* pClientUIA;
 	IUIAutomationTreeWalker* pControlWalker;
 	IUIAutomationElement* node;
+	HWND wnd;
 };
 
 UINode::UINode(struct UINodeData* pdata) {
@@ -92,14 +94,48 @@ bool UINode::Click() {
 	struct UINodeData* data = reinterpret_cast<struct UINodeData*>(buffer);
 	IUnknown* tmp;
 	HRESULT hr = data->node->GetCurrentPattern(UIA_InvokePatternId, (IUnknown**)&tmp);
-	if (tmp && hr == S_OK) {
-		IInvokeProvider* invoker = static_cast<IInvokeProvider*>(tmp);
-		if (invoker) {
-			hr = data->node->SetFocus();
-			if (hr == S_OK) {
-				hr = invoker->Invoke();
+	if (hr == S_OK) {
+		if (tmp) {
+			IInvokeProvider* invoker = static_cast<IInvokeProvider*>(tmp);
+			if (invoker) {
+				hr = data->node->SetFocus();
 				if (hr == S_OK) {
-					bRet = true;
+					hr = invoker->Invoke();
+					if (hr == S_OK) {
+						bRet = true;
+					}
+				}
+			}
+		} else {
+			hr = data->node->GetCurrentPattern(UIA_LegacyIAccessiblePatternId, (IUnknown**)&tmp);
+			if (tmp && hr == S_OK) {
+				ILegacyIAccessibleProvider* acc = static_cast<ILegacyIAccessibleProvider*>(tmp);
+				if (acc) {
+					hr = data->node->SetFocus();
+					if (hr == S_OK) {
+						IOleControl* abc = nullptr;
+						CONTROLTYPEID tid;
+						data->node->get_CurrentControlType(&tid);
+						if (tid == UIA_PaneControlTypeId) {
+						}
+
+						POINT p;
+						BOOL pc = false;
+						hr = data->node->GetClickablePoint(&p, &pc);
+
+						hr = data->node->QueryInterface<IOleControl>(&abc);
+
+						SendMessage(data->wnd, WM_KEYDOWN, 'A' - 0x20, 0);
+						Sleep(100);
+						SendMessage(data->wnd, WM_CHAR, 'A' - 0x20, 0);
+						Sleep(100);
+						SendMessage(data->wnd, WM_KEYUP, 'A' - 0x20, 0);
+						Sleep(100);
+						SendMessage(data->wnd, WM_KEYDOWN, VK_RETURN, 0);
+						Sleep(100);
+						SendMessage(data->wnd, WM_KEYUP, VK_RETURN, 0);
+						Sleep(100);
+					}
 				}
 			}
 		}
@@ -152,6 +188,7 @@ bool UINode::IterChildren2(void(*cb)(void* instance, UINode* wnd), void* instanc
 	while (pNode) {
 		struct UINodeData nodeData;
 		memset(&nodeData, 0, sizeof(nodeData));
+		nodeData.wnd = data->wnd;
 		nodeData.pClientUIA = data->pClientUIA;
 		nodeData.node = pNode;
 		nodeData.pControlWalker = data->pControlWalker;
@@ -165,7 +202,7 @@ bool UINode::IterChildren2(void(*cb)(void* instance, UINode* wnd), void* instanc
 }
 
 struct ProcessWindowData {
-	HANDLE handle;
+	HWND handle;
 };
 
 ProcessWindow::ProcessWindow(struct ProcessWindowData* pdata) {
@@ -208,7 +245,7 @@ static char WindowNames[1024];
 
 const char* ProcessWindow::GetWindowName() {
 	struct ProcessWindowData* data = reinterpret_cast<struct ProcessWindowData*>(buffer);
-	GetWindowTextA((HWND)data->handle, WindowNames, sizeof(WindowNames) - 1);
+	GetWindowTextA(data->handle, WindowNames, sizeof(WindowNames) - 1);
 	return WindowNames;
 }
 
@@ -216,7 +253,7 @@ static char ClassNames[1024];
 
 const char* ProcessWindow::GetWindowClassName() {
 	struct ProcessWindowData* data = reinterpret_cast<struct ProcessWindowData*>(buffer);
-	GetClassNameA((HWND)data->handle, ClassNames, sizeof(ClassNames) - 1);
+	GetClassNameA(data->handle, ClassNames, sizeof(ClassNames) - 1);
 	return ClassNames;
 }
 
@@ -258,6 +295,8 @@ struct UINodeData* ProcessWindow::GetRootNodeData() {
 	if (ndata->node) {
 		return ndata;
 	}
+
+	ndata->wnd = data->handle;
 
 	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
 	if (hr != S_OK && hr != S_FALSE) {

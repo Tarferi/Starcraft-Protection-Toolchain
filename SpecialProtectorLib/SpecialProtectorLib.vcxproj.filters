@@ -21,9 +21,15 @@
     <ClInclude Include="src\bin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\SpecialProtector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SpecialProtector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpecialProtector3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

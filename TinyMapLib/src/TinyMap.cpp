@@ -22,23 +22,6 @@ bool TinyMap::CheckFiles(const char* root) {
 		}
 
 	}
-	sprintf_s(TinyMapEditExec, "%sTemp", root);
-	if (!DirectoryExists(TinyMapEditExec)) {
-		CreateDirectory(TinyMapEditExec);
-		if (!DirectoryExists(TinyMapEditExec)) {
-			LOG_ERROR("Failed to create directory Temp");
-			return false;
-		}
-	}
-
-	sprintf_s(TinyMapEditExec, "%sTemp\\staredit", root);
-	if (!DirectoryExists(TinyMapEditExec)) {
-		CreateDirectory(TinyMapEditExec);
-		if (!DirectoryExists(TinyMapEditExec)) {
-			LOG_ERROR("Failed to create directory Temp\\staredit");
-			return false;
-		}
-	}
 
 	bool bRet = true;
 	bRet &= CheckFile(root, "TinyMap2.exe", "fb793ddcb7fea6cccd4cf55e99c6ecdeec5da299", (uint8*)tinymap2_exe, tinymap2_exe_size);

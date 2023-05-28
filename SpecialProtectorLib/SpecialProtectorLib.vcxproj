@@ -21,9 +21,11 @@
   <ItemGroup>
     <ClInclude Include="src\bin.h" />
     <ClInclude Include="src\SpecialProtector.h" />
+    <ClInclude Include="src\SpecialProtector3.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SpecialProtector.cpp" />
+    <ClCompile Include="src\SpecialProtector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

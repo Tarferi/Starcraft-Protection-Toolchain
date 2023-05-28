@@ -20,24 +20,6 @@ bool SpecialProtector::CheckFiles(const char* root) {
 			LOG_ERROR("Failed to create directory root %s", root);
 			return false;
 		}
-
-	}
-	sprintf_s(SpecialProtectorEditExec, "%sTemp", root);
-	if (!DirectoryExists(SpecialProtectorEditExec)) {
-		CreateDirectory(SpecialProtectorEditExec);
-		if (!DirectoryExists(SpecialProtectorEditExec)) {
-			LOG_ERROR("Failed to create directory Temp");
-			return false;
-		}
-	}
-
-	sprintf_s(SpecialProtectorEditExec, "%sTemp\\staredit", root);
-	if (!DirectoryExists(SpecialProtectorEditExec)) {
-		CreateDirectory(SpecialProtectorEditExec);
-		if (!DirectoryExists(SpecialProtectorEditExec)) {
-			LOG_ERROR("Failed to create directory Temp\\staredit");
-			return false;
-		}
 	}
 
 	bool bRet = true;
