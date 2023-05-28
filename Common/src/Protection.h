@@ -37,8 +37,12 @@ protected:
 	bool CheckFile(const char* root, const char* file, const char* sha1, uint8* data, uint32 dataLength);
 
 	bool HandleOpenFileDialog(ProcessWindow* wnd, const char* file);
+	
+	bool HandleOpenFileDialog2(ProcessWindow* wnd, const char* file);
 
 	bool HandleSaveFileDialog(ProcessWindow* wnd, const char* file);
+	
+	bool HandleSaveFileDialog2(ProcessWindow* wnd, const char* file);
 
 	void Sleep(int32 sleepMS);
 

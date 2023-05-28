@@ -36,6 +36,11 @@ Special protector 3. Must be used with `-visible` because keyboard is abused to 
 > No options available
 
 ```
+shadow
+```
+Shadow protector. Must be used with `-visible` because keyboard is abused to control protectors window.
+> No options available
+```
 smlp
 ```
 Starcraft Map Locker Project

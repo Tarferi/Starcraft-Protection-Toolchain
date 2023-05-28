@@ -115,6 +115,7 @@ bool UINode::Click() {
 					HWND phwnd = GetForegroundWindow();
 					SetForegroundWindow(data->wnd);
 					hr = data->node->SetFocus();
+
 					if (hr == S_OK) {
 						INPUT in;
 						memset(&in, 0, sizeof(INPUT));

@@ -2,6 +2,7 @@
 #include "TinyMapLib/src/TinyMap.h"
 #include "SpecialProtectorLib/src/SpecialProtector.h"
 #include "SpecialProtectorLib/src/SpecialProtector3.h"
+#include "ShadowProtectorLib/src/ShadowProtector.h"
 #include "SMLPLib/src/SMLP.h"
 #include <Desktop.h>
 
@@ -71,6 +72,9 @@ int main(int argc, char** argv) {
         // SMLP
         printf("smlp\r\n\r\n");
 
+        // Shadow protector
+        printf("shadow\r\n\r\n");
+
         printf("\r\n");
     } else {
         DesktopFactory* f = hiddenDesktop ? (DesktopFactory*) &hf : (DesktopFactory*) &vf;
@@ -136,6 +140,19 @@ int main(int argc, char** argv) {
             } else if (!strcmp(alg, "smlp")) {
                 if (run) {
                     SMLP p(f);
+                    if (p.Check()) {
+                        run &= p.Protect(input, output);
+                    } else {
+                        run = false;
+                    }
+                }
+            } else if (!strcmp(alg, "shadow")) {
+                if(hiddenDesktop) {
+                    LOG_ERROR("Cannot run hidden with special3. There are clicks inside the window that must be visible");
+                    run = false;
+                }
+                if (run) {
+                    ShadowProtector p(f);
                     if (p.Check()) {
                         run &= p.Protect(input, output);
                     } else {

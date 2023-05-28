@@ -53,6 +53,7 @@ bool Protection::HandleOpenFileDialog(ProcessWindow* wnd, const char* file) {
 	}
 
 	bool bRet = true;
+	wnd->PrintHierarchy(NodeInfo::ClassAndName);
 	bRet &= wnd->GetRootNode()->NthChildOfClass("ComboBox", 0, [&](UINode* comboNode) {
 		bRet &= comboNode->NthChildOfClass("Edit", 0, [&](UINode* editNode) {
 			bRet &= editNode->SetText(file);
@@ -61,6 +62,29 @@ bool Protection::HandleOpenFileDialog(ProcessWindow* wnd, const char* file) {
 
 	bRet &= wnd->GetRootNode()->NthChildOfClass("Button", 0, [&](UINode* btnNode) {
 		bRet &= btnNode->Click();
+	});
+
+	return bRet;
+}
+
+bool Protection::HandleOpenFileDialog2(ProcessWindow* wnd, const char* file) {
+	if (!FileExists(file)) {
+		LOG_ERROR("Input file does not exist");
+		return false;
+	}
+
+	bool bRet = true;
+	
+	bRet &= wnd->GetRootNode()->NthChildOfClass("#32770", 0, [&](UINode* wndNode) {
+		bRet &= wndNode->NthChildOfClass("ComboBox", 1, [&](UINode* comboNode) {
+			bRet &= comboNode->NthChildOfClass("Edit", 0, [&](UINode* editNode) {
+				bRet &= editNode->SetText(file);
+			});
+		});
+
+		bRet &= wndNode->NthChildOfClass("Button", 0, [&](UINode* btnNode) {
+			bRet &= btnNode->Click();
+		});
 	});
 
 	return bRet;
@@ -100,6 +124,35 @@ bool Protection::HandleSaveFileDialog(ProcessWindow* wnd, const char* file) {
 		bRet &= btnNode->Click();
 		});
 
+	return bRet;
+}
+
+bool Protection::HandleSaveFileDialog2(ProcessWindow* wnd, const char* file) {
+	bool bRet = true;
+	if (FileExists(file)) {
+		if (!DeleteFile(file)) {
+			LOG_ERROR("Could not delete output file");
+			return false;
+		}
+	}
+
+	if (FileExists(file)) {
+		LOG_ERROR("Could not delete output file");
+		return false;
+	}
+
+	bRet &= wnd->GetRootNode()->NthChildOfClass("#32770", 0, [&](UINode* wndNode) {
+		bRet &= wndNode->NthChildOfClass("ComboBox", 1, [&](UINode* comboNode) {
+			bRet &= comboNode->NthChildOfClass("Edit", 0, [&](UINode* editNode) {
+				bRet &= editNode->SetText(file);
+			});
+		});
+
+		bRet &= wndNode->NthChildOfClass("Button", 0, [&](UINode* btnNode) {
+			bRet &= btnNode->Click();
+		});
+
+	});
 	return bRet;
 }
 
